@@ -86,7 +86,6 @@ export const getEventStats = async (req: Request, res: Response) => {
                 eq(registrationsTable.eventId, eventId)
             )
         )
-        console.log(registerationsTable);
 
         // Creating a response data to send to user
         const responseData = {

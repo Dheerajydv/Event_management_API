@@ -1,5 +1,5 @@
 {
-  "id": "632b46e9-73f0-42ba-9dc8-079260a16c95",
+  "id": "121049f9-3d76-439e-862d-6ae68ad49b54",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -34,6 +34,13 @@
         },
         "capacity": {
           "name": "capacity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "total-registerations": {
+          "name": "total-registerations",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

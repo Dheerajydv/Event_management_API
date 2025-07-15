@@ -4,6 +4,7 @@ CREATE TABLE "events" (
 	"location" text NOT NULL,
 	"date-time" timestamp NOT NULL,
 	"capacity" integer DEFAULT 0 NOT NULL,
+	"total-registerations" integer DEFAULT 0 NOT NULL,
 	"created-at" timestamp DEFAULT now() NOT NULL,
 	"updated-at" timestamp DEFAULT now() NOT NULL
 );

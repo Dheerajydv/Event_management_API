@@ -7,7 +7,7 @@ const router = Router();
 router.post("/create", createEvent)
 
 // Get Event Details
-router.get("/events", getEventData)
+router.get("/all", getEventData)
 
 // List Upcoming Events
 router.get("/upcomming-events", getUpcommingEvents)

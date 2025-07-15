@@ -1,6 +1,6 @@
 {
-  "id": "632b46e9-73f0-42ba-9dc8-079260a16c95",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "0f7f8e44-fd43-4349-96bd-cc0da77312ec",
+  "prevId": "632b46e9-73f0-42ba-9dc8-079260a16c95",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -34,6 +34,13 @@
         },
         "capacity": {
           "name": "capacity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "total-registerations": {
+          "name": "total-registerations",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

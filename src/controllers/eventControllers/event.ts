@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "../../index";
-import { eventTable } from "../../db/schema.ts"
+import { eventTable, registrationsTable } from "../../db/schema.ts"
 import { and, asc, desc, eq, gt } from "drizzle-orm";
 import { ApiResponse } from "../../helpers/ApiResponse.ts"
 import { ApiError } from "../../helpers/ApiError.ts"
@@ -80,10 +80,18 @@ export const getEventStats = async (req: Request, res: Response) => {
             throw new ApiError(404, "Event Details Not Found")
         }
 
+        // Getting total registerations
+        const registerationsTable = await db.select().from(registrationsTable).where(
+            and(
+                eq(registrationsTable.eventId, eventId)
+            )
+        )
+        console.log(registerationsTable);
+
         // Creating a response data to send to user
         const responseData = {
-            TotalRegistrations: eventData[0].registerations,
-            RemainingCapacity: eventData[0].capacity,
+            TotalRegistrations: registerationsTable.length,
+            RemainingCapacity: eventData[0].capacity - registerationsTable.length,
             TotalCapacity: eventData[0].capacity
         }
 

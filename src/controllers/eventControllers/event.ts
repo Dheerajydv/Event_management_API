@@ -91,7 +91,8 @@ export const getEventStats = async (req: Request, res: Response) => {
         const responseData = {
             TotalRegistrations: registerationsTable.length,
             RemainingCapacity: eventData[0].capacity - registerationsTable.length,
-            TotalCapacity: eventData[0].capacity
+            TotalCapacity: eventData[0].capacity,
+            RemainingCapacityPercentage: (registerationsTable.length / eventData[0].capacity) * 100
         }
 
         res.status(200).json(new ApiResponse(200, responseData, "Event Stats Fetched"))

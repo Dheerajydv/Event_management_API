@@ -25,6 +25,12 @@ export const registerForevents = async (req: Request, res: Response) => {
             throw new ApiError(404, "Event Maximum Capacity Reached")
         }
 
+        // Check if the event date has passed
+        const currentDate = new Date(Date.now());
+        if (events[0].dateTime < currentDate) {
+            throw new ApiError(400, "Event Date has passed")
+        }
+
 
         // Check if the user already exists
         const userAlreadyExists = await db.select().from(usersTable).where(
@@ -97,6 +103,72 @@ export const registerForevents = async (req: Request, res: Response) => {
             res.status(201).json(new ApiResponse(201, newEventRegisteration, "New User Created and Sucessfully Registered for the Event"))
 
         }
+
+    } catch (err) {
+        res.status(err?.statusCode || 500).json({ error: err });
+    }
+}
+
+
+export const cancleRegisteration = async (req: Request, res: Response) => {
+    try {
+        const { name, email, eventTitle } = req.body;
+
+        // Getting the event
+        const events = await db.select().from(eventTable).where(
+            and(
+                eq(eventTable.title, eventTitle)
+            )
+        )
+        if (events.length == 0) {
+            throw new ApiError(400, "Wrong event details provided")
+        }
+
+
+        // Check if the user already exists
+        const userAlreadyExists = await db.select().from(usersTable).where(
+            and(
+                eq(usersTable.name, name),
+                eq(usersTable.email, email)
+            )
+        )
+        if (userAlreadyExists.length === 0) {
+            throw new ApiError(404, "User does not exists")
+        }
+
+        // Check if user has registered for the event
+        const userHasRegistered = await db.select().from(registrationsTable).where(
+            and(
+                eq(registrationsTable.eventId, events[0].id),
+                eq(registrationsTable.userId, userAlreadyExists[0].id)
+            )
+        )
+        if (userHasRegistered.length === 0) {
+            throw new ApiError(400, "Register first")
+        }
+
+        // Cancel the event registeration
+        const updatedRegisterationTable = await db.delete(registrationsTable).where(
+            and(
+                eq(registrationsTable.userId, userAlreadyExists[0].id),
+                eq(registrationsTable.eventId, events[0].id)
+            )
+        ).returning();
+
+        if (updatedRegisterationTable.length === 0) {
+            throw new ApiError(500, "Cancelation Failed")
+        }
+
+        // Reduce the total registerations on the events table if the user has sucessfully cancled the registeration
+        if (updatedRegisterationTable.length !== 0) {
+            await db.update(eventTable).set({ totalRegisterations: sql`${eventTable.totalRegisterations} + 1` }).where(
+                and(
+                    eq(eventTable.id, events[0].id)
+                )
+            )
+        }
+
+        res.status(200).json(new ApiResponse(200, updatedRegisterationTable, "Event Registeration cancled"))
 
     } catch (err) {
         res.status(err?.statusCode || 500).json({ error: err });
